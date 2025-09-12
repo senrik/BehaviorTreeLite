@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
-
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 
 namespace BehaviorTree
@@ -20,7 +22,29 @@ namespace BehaviorTree
         }
         public BehaviorTree(BehaviorTree other)
         {
-            // TODO: Implement deep copy
+            var queue = new List<(BehaviorTreeNode, BehaviorTreeNode)>();
+            
+            
+            this.root = new BehaviorTreeNode(other.root);
+            queue.Add((other.root, this.root));
+            BehaviorTreeNode header = this.root;
+
+            while (queue.Count > 0) {
+                var temp = queue[0];
+                
+                
+                queue.RemoveAt(0);
+                var current = temp.Item1.firstChildNode;
+                
+                while(current != null)
+                {
+                    
+                    var child = new BehaviorTreeNode((BehaviorTreeNode)current);
+                    temp.Item2.AddNode(child);
+                    queue.Add(((BehaviorTreeNode)current, child));
+                    current = current.siblingNode;
+                }
+            }
         }
 
         public void EvaluateTree(IBehaviorTreeAgent instance)
@@ -126,6 +150,46 @@ namespace BehaviorTree
         public float movementSpeed;
         public float wanderMovementSpeed;
         public float tetherRange;
+    }
+
+    public class BehaviorTreeTasks
+    {
+        private static BehaviorTreeTasks instance;
+        private static Dictionary<string, Type> tasks;
+        public static BehaviorTreeTask GetTask(string label)
+        {
+            BehaviorTreeTask output = null;
+            try
+            {
+                output = (BehaviorTreeTask)Activator.CreateInstance(tasks[label]);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
+            }
+
+            return output;
+        }
+
+        private BehaviorTreeTasks()
+        {
+            tasks = new Dictionary<string, Type>();
+            foreach (System.Type t in Assembly.GetAssembly(typeof(BehaviorTreeTask)).GetTypes())
+            {
+                if (t != typeof(BehaviorTreeTask) && t.IsSubclassOf(typeof(BehaviorTreeTask)))
+                {
+                    tasks.Add(t.Name, t);
+                }
+            }
+        }
+
+        public static BehaviorTreeTasks Instance{
+            get { 
+                if(instance == null)
+                    instance = new BehaviorTreeTasks();
+                return instance;
+            }
+        }
     }
 }
 
