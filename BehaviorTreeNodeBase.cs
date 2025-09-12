@@ -1,37 +1,69 @@
+using System;
+using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BehaviorTree
 {
     [System.Serializable]
-    public class BehaviorTreeNode
+    public abstract class BehaviorTreeNodeBase
     {
         protected static int ID;
         [SerializeField]
-        protected int id;
+        protected int _id;
+        [SerializeField]
+        protected int childCount;
         [SerializeReference]
-        protected BehaviorTreeNode firstChildNode;
+        public BehaviorTreeNodeBase firstChildNode;
         [SerializeReference]
-        protected BehaviorTreeNode siblingNode;
+        public BehaviorTreeNodeBase siblingNode;
+
         public virtual BehaviorTreeState EvaluateNode(IBehaviorTreeAgent instance) { return BehaviorTreeState.None; }
-        public void AddNode(BehaviorTreeNode other) {
-            if(firstChildNode == null)
+        public abstract void AddNode(BehaviorTreeNodeBase other);
+
+        public abstract void RemoveNode(BehaviorTreeNodeBase other);
+
+        public int id
+        {
+            get { return _id; }
+        }
+    }
+
+    [System.Serializable]
+    public class BehaviorTreeNode : BehaviorTreeNodeBase
+    {
+        public BehaviorTreeNode() {
+            _id = ID;
+            ID++;
+        }
+
+        public BehaviorTreeNode(BehaviorTreeNode other)
+        {
+            this._id = other._id;
+            this.childCount = other.childCount;
+        }
+
+        public override void AddNode(BehaviorTreeNodeBase other)
+        {
+            if (firstChildNode == null)
                 firstChildNode = other;
             else
             {
                 var current = firstChildNode;
-                while (current != null)
+                while (current.siblingNode != null)
                 {
                     current = current.siblingNode;
                 }
-                current = other;
+                current.siblingNode = other;
             }
+            this.childCount++;
         }
 
-        public void RemoveNode(BehaviorTreeNode other)
+        public override void RemoveNode(BehaviorTreeNodeBase other)
         {
-            if(this.firstChildNode != null)
+            if (this.firstChildNode != null)
             {
-                if(this.firstChildNode.id == other.id)
+                if (this.firstChildNode.id == other.id)
                 {
                     var temp = this.firstChildNode.siblingNode;
                     this.firstChildNode = temp;
@@ -40,7 +72,7 @@ namespace BehaviorTree
                 {
                     var current = this.firstChildNode;
                     var prev = this.firstChildNode;
-                    while(current != null)
+                    while (current != null)
                     {
                         if (current.id == other.id)
                         {
@@ -51,23 +83,18 @@ namespace BehaviorTree
                         current = current.siblingNode;
                     }
                 }
-
-
+                this.childCount--;
             }
         }
+
+        
     }
 
     [System.Serializable]
     public class BehaviorTreeSequencerNode : BehaviorTreeNode
     {
-        public BehaviorTreeSequencerNode() {
-            id = ID;
-            ID++;
-        }
-        public BehaviorTreeSequencerNode(BehaviorTreeSequencerNode other)
-        {
-            this.id = other.id;
-        }
+        public BehaviorTreeSequencerNode() : base() { }
+        public BehaviorTreeSequencerNode(BehaviorTreeSequencerNode other) : base(other) { }
         public override BehaviorTreeState EvaluateNode(IBehaviorTreeAgent instance)
         {
             var output = BehaviorTreeState.None;
@@ -85,15 +112,8 @@ namespace BehaviorTree
     [System.Serializable]
     public class BehaviorTreeSelectorNode : BehaviorTreeNode
     {
-        public BehaviorTreeSelectorNode()
-        {
-            id = ID;
-            ID++;
-        }
-        public BehaviorTreeSelectorNode(BehaviorTreeSelectorNode other)
-        {
-            this.id = other.id;
-        }
+        public BehaviorTreeSelectorNode() : base() { }
+        public BehaviorTreeSelectorNode(BehaviorTreeSelectorNode other) : base(other) { }
         public override BehaviorTreeState EvaluateNode(IBehaviorTreeAgent instance)
         {
             var output = BehaviorTreeState.None;
@@ -113,6 +133,16 @@ namespace BehaviorTree
     {
         [SerializeReference]
         private BehaviorTreeTask task;
+
+        public BehaviorTreeExecutorNode() : base()
+        {
+            this.task = null;
+        }
+
+        public BehaviorTreeExecutorNode(BehaviorTreeExecutorNode other) :base(other)
+        {
+            this.task = other.task.Clone();
+        }
         public override BehaviorTreeState EvaluateNode(IBehaviorTreeAgent instance)
         {
             return this.task.PerformTask(instance);
