@@ -1,2 +1,23 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/Scripts/UI/BehaviorTreeStyles.uss?fileID=7433441132597879392&amp;guid=0707b2a3c3e94124a9d35d49bfef1979&amp;type=3#BehaviorTreeStyles" />
+    <Style src="project://database/Assets/Scripts/UI/EditorViewStyles.uss?fileID=7433441132597879392&amp;guid=05c7a689f5f2d2a43b3b7c45fca49153&amp;type=3#EditorViewStyles" />
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:ScrollView name="TreeView" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 0.3; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);">
+            <uie:ObjectField label="Tree Asset" type="BehaviorTreeAsset, Assembly-CSharp" name="BehaviorTreeAssetField" />
+            <ui:Label text="Nodes" style="-unity-text-align: upper-center; border-bottom-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);" />
+            <ui:Button text="Selector" name="AddSelectorNodeButton" />
+            <ui:Button text="Sequencer" name="AddSequencerNodeButton" />
+            <ui:Button text="Executor" name="AddExecutorNodeButton" />
+            <ui:VisualElement name="SelectedNodeDisplay" style="flex-grow: 1;">
+                <ui:Label text="Selected Node" style="-unity-text-align: upper-center;" />
+                <ui:DropdownField label="Task" name="TaskDropdown" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0;">
+                <ui:Button text="Save" name="SaveTreeButton" style="height: 48px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>

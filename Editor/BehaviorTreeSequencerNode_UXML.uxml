@@ -1,2 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/UI/BehaviorTreeStyles.uss?fileID=7433441132597879392&amp;guid=0707b2a3c3e94124a9d35d49bfef1979&amp;type=3#BehaviorTreeStyles" />
+    <ui:VisualElement name="NodeBodyElem" class="bt-node-root">
+        <ui:VisualElement name="InConnections" class="connection-area" style="flex-grow: 0; flex-shrink: 0; width: 80%; height: 24px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); align-self: center;" />
+        <ui:Label text="=&gt;" style="-unity-font-style: bold; color: rgb(209, 209, 209); -unity-text-align: middle-center; font-size: 24px;" />
+        <ui:VisualElement name="OutConnections" class="connection-area" style="flex-grow: 0; flex-shrink: 0; width: 80%; height: 24px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); align-self: center;" />
+    </ui:VisualElement>
 </ui:UXML>
