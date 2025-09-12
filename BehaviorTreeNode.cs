@@ -5,33 +5,17 @@ using UnityEngine;
 
 namespace BehaviorTree
 {
+
     [System.Serializable]
-    public abstract class BehaviorTreeNodeBase
+    public abstract class BehaviorTreeNode
     {
         protected static int ID;
         [SerializeField]
         protected int _id;
-        [SerializeField]
-        protected int childCount;
         [SerializeReference]
-        public BehaviorTreeNodeBase firstChildNode;
+        public BehaviorTreeNode firstChildNode;
         [SerializeReference]
-        public BehaviorTreeNodeBase siblingNode;
-
-        public virtual BehaviorTreeState EvaluateNode(IBehaviorTreeAgent instance) { return BehaviorTreeState.None; }
-        public abstract void AddNode(BehaviorTreeNodeBase other);
-
-        public abstract void RemoveNode(BehaviorTreeNodeBase other);
-
-        public int id
-        {
-            get { return _id; }
-        }
-    }
-
-    [System.Serializable]
-    public class BehaviorTreeNode : BehaviorTreeNodeBase
-    {
+        public BehaviorTreeNode siblingNode;
         public BehaviorTreeNode() {
             _id = ID;
             ID++;
@@ -40,10 +24,9 @@ namespace BehaviorTree
         public BehaviorTreeNode(BehaviorTreeNode other)
         {
             this._id = other._id;
-            this.childCount = other.childCount;
         }
 
-        public override void AddNode(BehaviorTreeNodeBase other)
+        public virtual void AddNode(BehaviorTreeNode other)
         {
             if (firstChildNode == null)
                 firstChildNode = other;
@@ -56,10 +39,9 @@ namespace BehaviorTree
                 }
                 current.siblingNode = other;
             }
-            this.childCount++;
         }
 
-        public override void RemoveNode(BehaviorTreeNodeBase other)
+        public virtual void RemoveNode(BehaviorTreeNode other)
         {
             if (this.firstChildNode != null)
             {
@@ -83,11 +65,24 @@ namespace BehaviorTree
                         current = current.siblingNode;
                     }
                 }
-                this.childCount--;
             }
         }
 
-        
+        public virtual BehaviorTreeState EvaluateNode(IBehaviorTreeAgent instance) { return BehaviorTreeState.None; }
+
+        protected abstract BehaviorTreeNode CloneSelf();
+        public BehaviorTreeNode Clone()
+        {
+            var clone = CloneSelf();
+            clone.firstChildNode = firstChildNode?.Clone();
+            clone.siblingNode = siblingNode?.Clone();
+            return clone;
+        }
+
+        public int id
+        {
+            get { return _id; }
+        }
     }
 
     [System.Serializable]
@@ -107,6 +102,11 @@ namespace BehaviorTree
             }
             return output;
         }
+
+        protected override BehaviorTreeNode CloneSelf()
+        {
+            return new BehaviorTreeSequencerNode(this);
+        }
     }
 
     [System.Serializable]
@@ -125,6 +125,10 @@ namespace BehaviorTree
                     break;
             }
             return output;
+        }
+        protected override BehaviorTreeNode CloneSelf()
+        {
+            return new BehaviorTreeSelectorNode(this);
         }
     }
 
@@ -147,11 +151,16 @@ namespace BehaviorTree
         {
             return this.task.PerformTask(instance);
         }
+        protected override BehaviorTreeNode CloneSelf()
+        {
+            return new BehaviorTreeExecutorNode(this);
+        }
 
         public void AssignTask(BehaviorTreeTask task)
         {
             this.task = task;
         }
+
     }
 }
 
