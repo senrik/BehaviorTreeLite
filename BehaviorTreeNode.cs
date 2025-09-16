@@ -13,9 +13,9 @@ namespace BehaviorTree
         [SerializeField]
         protected int _id;
         [SerializeReference]
-        public BehaviorTreeNode firstChildNode;
+        protected BehaviorTreeNode firstChildNode;
         [SerializeReference]
-        public BehaviorTreeNode siblingNode;
+        protected BehaviorTreeNode siblingNode;
         public BehaviorTreeNode() {
             _id = ID;
             ID++;
@@ -74,14 +74,23 @@ namespace BehaviorTree
         public BehaviorTreeNode Clone()
         {
             var clone = CloneSelf();
-            clone.firstChildNode = firstChildNode?.Clone();
-            clone.siblingNode = siblingNode?.Clone();
+            //clone.firstChildNode = firstChildNode?.Clone();
+            //clone.siblingNode = siblingNode?.Clone();
             return clone;
         }
 
         public int id
         {
             get { return _id; }
+        }
+
+        public BehaviorTreeNode FirstChildNode
+        {
+            get { return  firstChildNode; }
+        }
+        public BehaviorTreeNode SiblingNode
+        {
+            get { return siblingNode; }
         }
     }
 

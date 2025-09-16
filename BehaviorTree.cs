@@ -25,24 +25,23 @@ namespace BehaviorTree
             var queue = new List<(BehaviorTreeNode, BehaviorTreeNode)>();
             
             
-            this.root = new BehaviorTreeNode(other.root);
+            this.root = other.root.Clone();
             queue.Add((other.root, this.root));
             BehaviorTreeNode header = this.root;
 
             while (queue.Count > 0) {
                 var temp = queue[0];
-                
-                
                 queue.RemoveAt(0);
-                var current = temp.Item1.firstChildNode;
+                nodes.Add(temp.Item2);
+                var current = temp.Item1.FirstChildNode;
                 
                 while(current != null)
                 {
-                    
-                    var child = new BehaviorTreeNode((BehaviorTreeNode)current);
+
+                    var child = current.Clone();
                     temp.Item2.AddNode(child);
-                    queue.Add(((BehaviorTreeNode)current, child));
-                    current = current.siblingNode;
+                    queue.Add((current, child));
+                    current = current.SiblingNode;
                 }
             }
         }
