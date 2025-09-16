@@ -3,7 +3,7 @@
     <Style src="project://database/Assets/Scripts/UI/EditorViewStyles.uss?fileID=7433441132597879392&amp;guid=05c7a689f5f2d2a43b3b7c45fca49153&amp;type=3#EditorViewStyles" />
     <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
         <ui:VisualElement style="flex-grow: 1;">
-            <ui:ScrollView name="TreeView" style="flex-grow: 1;" />
+            <ui:ScrollView name="TreeView" style="flex-grow: 1; flex-wrap: wrap;" />
         </ui:VisualElement>
         <ui:VisualElement style="flex-grow: 0.3; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);">
             <uie:ObjectField label="Tree Asset" type="BehaviorTreeAsset, Assembly-CSharp" name="BehaviorTreeAssetField" />
